@@ -31,7 +31,6 @@ const Login = () => {
       try {
         login(values).then((data) => {
           if (data?.data !== undefined) {
-            console.log(data.data.token);
             localStorage.setItem("jwtToken", data.data.token);
             navigate("/home");
           } else {
