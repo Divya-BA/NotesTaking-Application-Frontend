@@ -245,7 +245,7 @@ const Card = (props) => {
           >
             <p className="text-2xl font-bold px-7 py-2">Edit Box</p>
             <div className="my-4 mx-auto w-[90%]">
-              <label htmlForfor="title" className="text-2xl text-semibold">
+              <label htmlFor="title" className="text-2xl text-semibold">
                 Title
               </label>
               <input
@@ -260,7 +260,7 @@ const Card = (props) => {
             </div>
             <div className=" mb-2  mx-auto w-[90%] ">
               <label
-                htmlForfor="description"
+                htmlFor="description"
                 className="text-2xl text-semibold"
               >
                 Description

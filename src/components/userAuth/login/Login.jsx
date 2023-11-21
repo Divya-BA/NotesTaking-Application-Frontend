@@ -31,7 +31,6 @@ const Login = () => {
       try {
         login(values).then((data) => {
           if (data?.data !== undefined) {
-            console.log(data.data.token);
             localStorage.setItem("jwtToken", data.data.token);
             navigate("/home");
           } else {
@@ -58,7 +57,31 @@ const Login = () => {
       password: Yup.string().required("Please enter password"),
     }),
   });
+  const demoLogin = () => {
+    const demo = {
+        email: "linder010101@gmail.com",
+        password: "12345"
+    };
+    login(demo).then((data) => {
+        if (data?.data !== undefined) {
+            localStorage.setItem('jwtToken', data.data.token);
+            navigate('/home');
 
+        } else {
+            toast.success('Please Enter Valid Email and Password', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    })
+
+}
   if (isLoading) {
     return (
       <div className=" flex justify-center items-center h-screen">
@@ -183,7 +206,6 @@ const Login = () => {
                   <div className="w-[85%] mx-auto px-4 py-2 mt-6 rounded-lg text-center text-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:border-2 hover:border-red-600 hover:rounded-xl">
                     <button>Login</button>
                   </div>
-                 
 
                   <div className="w-[85%] mx-auto px-4 py-2  mb-2 rounded-lg text-center text-xl   ">
                     <Link
@@ -192,6 +214,11 @@ const Login = () => {
                     >
                       Forgot Password!
                     </Link>
+                    <div className="w-[85%] mx-auto px-4 py-2 mt-6 mb-3 rounded-lg text-center text-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:border-2 hover:border-red-600 hover:rounded-xl ">
+                      <button type="button" onClick={demoLogin}>
+                        Demo Login
+                      </button>
+                    </div>
                     <button type="button">
                       Dont Have Account?&nbsp;
                       <span

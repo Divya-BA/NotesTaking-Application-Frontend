@@ -22,9 +22,11 @@ const NotesData = (Component) => {
         }, [token])
         
         const userid = useSelector((state) => state.toggle.userid);
-        const { data, isLoading } = useGetNotesQuery(userid);
-        if (token ) {
+       
+        if (token && userid ) {
+          const { data, isLoading } = useGetNotesQuery(userid);
           return <Component data={data} loading={isLoading} />
+          
         } else {
             toast.success('Please Login First..', {
                 position: "top-right",

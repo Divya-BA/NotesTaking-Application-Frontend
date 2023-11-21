@@ -27,7 +27,6 @@ const Register = (props) => {
            
             addUser(values)
             .then(data =>{
-                console.log(data.data.data.token);
                 toast.success('User Signup Successfylly', {
                     position: "top-right",
                     autoClose: 2000,
