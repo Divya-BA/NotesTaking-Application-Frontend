@@ -21,8 +21,9 @@ const Card = (props) => {
   const [EditCard, setEditCard] = useState(false);
   const [title, settitle] = useState("");
   const [description, setdescription] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [status, setStatus] = useState(item.status);
   const [NoteId, setNoteId] = useState();
-
 
   const grid = useSelector((state) => state.toggle.grid);
   const userid = useSelector((state) => state.toggle.userid);
@@ -75,14 +76,17 @@ const Card = (props) => {
       theme: "colored",
     });
   };
+
   const updateNote = () => {
     updateItem({
       _id: userid,
       title: title,
       description: description,
+      deadline: deadline,
+      status: status,
       id: NoteId,
     });
-    toast.success("Note Edited Success", {
+    toast.success("Note Edited Successfully", {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -94,13 +98,14 @@ const Card = (props) => {
     });
     settitle("");
     setdescription("");
+    setDeadline("");
     setEditCard(false);
   };
 
   const updateFavorite = (id) => {
     const isFav = !item.isFav;
 
-    updateFav({ _id: userid, isFav, id }).then((data) => {
+    updateFav({ _id: userid, isFav, id }).then(() => {
       if (isFav) {
         toast.success("Added to Favorites", {
           position: "top-right",
@@ -130,7 +135,7 @@ const Card = (props) => {
   const UpdateArcheive = (id) => {
     const isArchive = !item.isArchive;
 
-    updateArcheive({ _id: userid, isArchive, id }).then((data) => {
+    updateArcheive({ _id: userid, isArchive, id }).then(() => {
       if (isArchive) {
         toast.success("Added to Archive", {
           position: "top-right",
@@ -157,7 +162,6 @@ const Card = (props) => {
     });
   };
 
-  
   return (
     <>
       {grid ? (
@@ -168,8 +172,12 @@ const Card = (props) => {
             } mx-auto my-6 md:mx-[110px] lg:m-4 w-[350px] h-[250px]  relative items-center bg-custom-white dark:bg-slate-800 border-none  rounded-xl shadow-lg hover:shadow-lg hover:shadow-orange-400`}
           >
             <div className="border-b-2 px-3 h-[50px] flex items-center justify-between text-lg font-semibold">
-              <p>{item.title}</p>
-              <div className="flex gap-3">
+              <p>{item.title}</p>{" "}
+              
+              <div className="flex gap-3 justify-center items-center">
+              <p className="border-1 py-0.5 px-2 ml-[5rem] h-[2rem] w-min rounded-md bg-orange-400 text-white hover:bg-orange-500">
+                {item.status}
+              </p>
                 <div
                   className={`${item.isFav ? "text-red-500" : ""}`}
                   onClick={() => {
@@ -189,10 +197,13 @@ const Card = (props) => {
               </div>
             </div>
             <div className="p-3 h-[150px]  text-justify">
-              <p>{item.description}</p>
+              <p className="h-[8rem] overflow-scroll  overflow-x-hidden ">{item.description}</p>
+              {/* <p className="border-1 mt-[4rem] ml-[14rem] py-1 px-2 w-[90px] rounded-md bg-orange-400 text-white hover:bg-orange-500">{item.status}</p> */}
             </div>
+
             <div className="absolute bottom-0 border-t-2 w-full h-[50px] flex justify-between items-center px-3">
-              <p>{moment(item.createdAt).format("YYYY-MM-DD")}</p>
+              <p>{moment(item.createdAt).format("YYYY-MM-DD")}</p>-
+              <p>{moment(item.deadline).format("YYYY-MM-DD")}</p>
               <div className={`${item.isTrash ? "hidden" : "flex"} gap-3`}>
                 <button
                   className="border-1 py-1 px-3 rounded-md bg-pink-400 text-white hover:bg-black"
@@ -200,6 +211,7 @@ const Card = (props) => {
                     setEditCard(!EditCard);
                     settitle(item.title);
                     setdescription(item.description);
+                    setDeadline(item.deadline);
                     setNoteId(item._id);
                     window.scrollTo(0, 0);
                   }}
@@ -258,11 +270,8 @@ const Card = (props) => {
                 }}
               />
             </div>
-            <div className=" mb-2  mx-auto w-[90%] ">
-              <label
-                htmlFor="description"
-                className="text-2xl text-semibold"
-              >
+            <div className="my-4 mx-auto w-[90%]">
+              <label htmlFor="description" className="text-2xl text-semibold">
                 Description
               </label>
               <textarea
@@ -275,6 +284,34 @@ const Card = (props) => {
                 }}
               />
             </div>
+            <div className="my-4 mx-auto w-[90%]">
+              <label htmlFor="deadline" className="text-2xl text-semibold">
+                Deadline
+              </label>
+              <input
+                id="deadline"
+                className="w-[100%] px-2 py-2 text-xl font-semibold rounded-md dark:text-black"
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+              />
+            </div>
+            <div className="my-4 mx-auto w-[90%]">
+              <label htmlFor="status" className="text-2xl text-semibold">
+                Status
+              </label>
+              <select
+                id="status"
+                className="w-[100%] px-2 py-2 text-xl font-semibold rounded-md dark:text-black"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="Pending">Pending</option>
+                <option value="InProgress">InProgress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
             <div className="flex items-center gap-3 px-4 mb-2 justify-end ">
               <button
                 className="border-2 border-black hover:bg-black hover:text-white py-2 px-3 rounded-md"
@@ -304,7 +341,7 @@ const Card = (props) => {
           >
             <p className="text-2xl font-bold px-7 py-2">Edit Box</p>
             <div className="my-4 mx-auto w-[90%]">
-              <label for="title" className="text-2xl text-semibold">
+              <label htmlFor="title" className="text-2xl text-semibold">
                 Title
               </label>
               <input
@@ -317,8 +354,8 @@ const Card = (props) => {
                 }}
               />
             </div>
-            <div className=" mb-2  mx-auto w-[90%] ">
-              <label for="description" className="text-2xl text-semibold">
+            <div className="my-4 mx-auto w-[90%]">
+              <label htmlFor="description" className="text-2xl text-semibold">
                 Description
               </label>
               <textarea
@@ -329,6 +366,18 @@ const Card = (props) => {
                 onChange={(e) => {
                   setdescription(e.target.value);
                 }}
+              />
+            </div>
+            <div className="my-4 mx-auto w-[90%]">
+              <label htmlFor="deadline" className="text-2xl text-semibold">
+                Deadline
+              </label>
+              <input
+                id="deadline"
+                className="w-[100%] px-2 py-2 text-xl font-semibold rounded-md dark:text-black"
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
               />
             </div>
             <div className="flex items-center gap-3 px-4 mb-2 justify-end ">
@@ -360,16 +409,20 @@ const Card = (props) => {
             <td className="py-4  text-center">
               {moment(item.createdAt).format("YYYY-MM-DD")}
             </td>
+            <td className="py-4  text-center">
+              {moment(item.deadline).format("YYYY-MM-DD")}
+            </td>
+            <td className="py-4  text-center">{item.status}</td>
             <td className="py-4 ">
               <div className="flex  justify-center">
                 <div className={`${item?.isTrash ? "hidden" : "flex"} gap-3  `}>
-                <div
+                  <div
                     className="px-2 py-1 rounded-[20%] bg-red-300 text-xl"
                     onClick={() => {
                       updateFavorite(item._id);
                     }}
                   >
-                    <GrFavorite className="text-black"/>
+                    <GrFavorite className="text-black" />
                   </div>
                   <div
                     className="px-2 py-1 rounded-[20%] bg-orange-300 text-xl"
@@ -377,7 +430,7 @@ const Card = (props) => {
                       UpdateArcheive(item._id);
                     }}
                   >
-                     <BiArchiveIn  className="text-black" />
+                    <BiArchiveIn className="text-black" />
                   </div>
                   <div
                     className="px-2 py-1 rounded-[20%] bg-green-300 text-xl"
@@ -385,6 +438,7 @@ const Card = (props) => {
                       setEditCard(!EditCard);
                       settitle(item.title);
                       setdescription(item.description);
+                      setDeadline(item.deadline);
                       setNoteId(item._id);
                     }}
                   >

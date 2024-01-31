@@ -91,6 +91,8 @@ const Home = (props) => {
                             TITLE
                           </th>
                           <th className="py-2">CREATED</th>
+                          <th className="py-2">DEADLINE</th>
+                          <th className="py-2">STATUS</th>
                           <th className="py-2 rounded-tr-lg">ACTIONS</th>
                         </tr>
                       </thead>

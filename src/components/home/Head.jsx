@@ -7,10 +7,14 @@ import write from "../image/write-removebg-preview.png";
 import { FiEdit } from "react-icons/fi";
 import { FaBold, FaUnderline } from "react-icons/fa";
 import { RxFontItalic } from "react-icons/rx";
+import moment from "moment";
+
 const Head = () => {
   const [Note, setNote] = useState(false);
   const [Title, setTitle] = useState("");
   const [Description, setDescription] = useState("");
+  const [Deadline, setDeadline] = useState(new Date()); // Initialize with current date
+  const [Status, setStatus] = useState("Pending");
   const titleContentEditableRef = useRef(null);
   const descriptionContentEditableRef = useRef(null);
 
@@ -39,39 +43,9 @@ const Head = () => {
     }
   };
 
-  // const handleBoldToggle = () => {
-  //   const selection = window.getSelection();
-  //   if (!selection.isCollapsed) {
-  //     const range = selection.getRangeAt(0);
-  //     const isBold = document.queryCommandState("bold");
-
-  //     const walk = (node) => {
-  //       if (node.nodeType === Node.TEXT_NODE) {
-  //         const span = document.createElement("span");
-  //         span.style.fontWeight = isBold ? "normal" : "bold";
-  //         span.appendChild(document.createTextNode(node.nodeValue));
-  //         node.parentNode.replaceChild(span, node);
-  //       } else if (node.nodeType === Node.ELEMENT_NODE) {
-  //         for (const childNode of node.childNodes) {
-  //           walk(childNode);
-  //         }
-  //       }
-  //     };
-
-  //     walk(range.commonAncestorContainer);
-
-  //     const boldSpans = range.commonAncestorContainer.querySelectorAll("span[style*='font-weight: bolder']");
-  //     boldSpans.forEach((boldSpan) => {
-  //       boldSpan.style.fontWeight = isBold ? "normal" : "bold";
-  //     });
-  //   }
-
-  //   document.execCommand("bold", false, null);
-  // };
-
   const AddNote = () => {
-    if (!Title || !Description) {
-      toast.error("Please fill in both Title and Description fields", {
+    if (!Title || !Description || !Deadline) {
+      toast.error("Please fill in all fields", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -87,10 +61,12 @@ const Head = () => {
     addNote({
       _id: UserId,
       title: Title,
-      isFav: "false",
-      isArchive: "false",
-      isTrash: "false",
+      isFav: false,
+      isArchive: false,
+      isTrash: false,
       description: Description,
+      deadline: moment(Deadline).toISOString(), // Format date to ISO format
+      status: Status, 
     });
 
     toast.success("Notes Added Successfully", {
@@ -107,6 +83,7 @@ const Head = () => {
     setNote(false);
     setTitle("");
     setDescription("");
+    setDeadline(new Date()); // Reset date to current date
   };
 
   useEffect(() => {
@@ -127,7 +104,7 @@ const Head = () => {
         <div
           className={`mr-2 md:ml-5 hover:font-semibold ${
             Note
-              ? "h-[220px] animate-slide-down"
+              ? "h-[370px] animate-slide-down"
               : "h-[30px] overflow-hidden animate-slide-up"
           } `}
         >
@@ -150,17 +127,37 @@ const Head = () => {
               }}
             />
           </div>
-          <div className=" my-5 w-[80%]">
+          <div className="my-5 w-[80%]">
             <div
               ref={descriptionContentEditableRef}
               placeholder="Description"
-              className="w-[100%] py-2 outline-none text-xl font-semibold rounded-lg text-black bg-white font-light"
+              className="w-[100%] py-2 h-[5rem] overflow-scroll  overflow-x-hidden  outline-none text-xl font-semibold rounded-lg text-black bg-white font-light"
               contentEditable={true}
               onInput={(e) => {
                 setDescription(e.currentTarget.textContent);
               }}
             />
           </div>
+
+          <div className="my-5 w-[80%]">
+            <input
+              type="date"
+              className="py-2 px-3 border border-gray-300 text-black rounded-md"
+              value={moment(Deadline).format("YYYY-MM-DD")}
+              onChange={(e) => setDeadline(new Date(e.target.value))}
+            />
+          </div>
+          <div className="my-5 w-[80%]">
+        <select
+          className="py-2 px-3 border border-gray-300 text-black rounded-md"
+          value={Status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="Pending">Pending</option>
+          <option value="InProgress">In-progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
 
           <div className="flex items-center gap-4 justify-end ">
             <button
